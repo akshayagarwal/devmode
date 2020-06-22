@@ -153,7 +153,10 @@
                 this.previousVolume = this.volume;
                 this.volume = 0;
             },
-            seek() {
+            seek(e) {
+                if (e !== undefined) {
+                    this.currentSeconds = e.target.value;
+                }
                 this.audio.currentTime = this.currentSeconds;
             },
             stop() {

@@ -9,7 +9,7 @@ const merge = require('webpack-merge');
 // webpack plugins
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const WebpackNotifierPlugin = require('webpack-notifier');
 
 // config files
@@ -106,7 +106,7 @@ const baseConfig = {
     },
     resolve: {
         alias: {
-            'vue$': 'vue/dist/vue.esm.js'
+            'vue$': 'vue/dist/vue.esm-bundler.js'
         },
         modules: [
             path.resolve(__dirname, 'node_modules'),

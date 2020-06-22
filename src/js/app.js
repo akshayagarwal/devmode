@@ -20,25 +20,23 @@ import OperatorMonoSSmBookItalicWoff2 from '../fonts/OperatorMonoSSm-BookItalic.
 // App main
 const main = async() => {
     // Async load the vue module
-    const { default: Vue } = await import(/* webpackChunkName: "vue" */ 'vue');
+    const { createApp } = await import(/* webpackChunkName: "vue" */ 'vue');
     // Async load the vue module
     const { mixin: VueClickaway } = await import(/* webpackChunkName: "vueclickaway" */ 'vue-clickaway');
     const { default: VueTyper } = await import(/* webpackChunkName: "vuetyper" */ 'vue-typer');
     const LazySizes = await import(/* webpackChunkName: "lazysizes" */ 'lazysizes');
     const LazySizesBgSet = await import(/* webpackChunkName: "lazysizes" */ 'lazysizes/plugins/bgset/ls.bgset.js');
     LazySizes.init();
-    Vue.use(VueTyper);
     // Create our vue instance
-    const vm = new Vue({
-        el: '#page-header',
+    const app = createApp({
         mixins: [VueClickaway],
         components: {
 //            Snowf,
         },
         delimiters: ['${', '}'],
-        data: {
+        data: () => ({
             menuOpen: false,
-        },
+        }),
         methods: {
             // Pre-render pages when the user mouses over a link
             // Usage: <a href="" @mouseover="prerenderLink">
@@ -64,10 +62,22 @@ const main = async() => {
             },
             toggle: function () {
                 this.menuOpen = !this.menuOpen;
+                console.log(this.menuOpen);
             },
         },
     });
+    app.use(VueTyper);
+
+    const root = app.mount("#page-container");
+
+    return root;
 };
+
 // Execute async function
-main().then((value) => {
+main().then((root) => {
 });
+
+// Accept HMR as per: https://webpack.js.org/api/hot-module-replacement#accept
+if (module.hot) {
+    module.hot.accept();
+}

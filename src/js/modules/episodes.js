@@ -4,32 +4,41 @@ import SkeletonBox from '../../vue/SkeletonBox.vue';
 // App main
 const main = async() => {
     // Async load the vue module
-    const { default: Vue } = await import(/* webpackChunkName: "vue" */ 'vue');
+    const { createApp, defineAsyncComponent } = await import(/* webpackChunkName: "vue" */ 'vue');
     const { default: VueEvents } = await import(/* webpackChunkName: "vueevents" */ 'vue-events');
 
-    Vue.use(VueEvents);
 // Create our vue instance
-    const vm = new Vue({
-        el: "#episodes-table",
+    const app = createApp({
         components: {
             'episodes-table': lazyLoadComponent({
-                componentFactory: () => import(/* webpackChunkName: "episodestable" */ '../../vue/EpisodesTable.vue'),
+                componentFactory: defineAsyncComponent(() => import(/* webpackChunkName: "episodestable" */ '../../vue/EpisodesTable.vue')),
                 loading: SkeletonBox,
                 loadingData: { height: `100vh`, width: `100%` },
             }),
         },
-        data: {},
+        data: () => ({
+        }),
         methods: {
             onTableRefresh(vuetable) {
-                Vue.nextTick(() => vuetable.refresh());
+                app.nextTick(() => vuetable.refresh());
             }
         },
         mounted() {
             this.$events.$on('refresh-table', eventData => this.onTableRefresh(eventData));
         },
     });
+    app.use(VueEvents);
+
+    const root = app.mount("#episodes-table");
+
+    return root;
 };
 
 // Execute async function
-main().then(() => {
+main().then((root) => {
 });
+
+// Accept HMR as per: https://webpack.js.org/api/hot-module-replacement#accept
+if (module.hot) {
+    module.hot.accept();
+}
